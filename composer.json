@@ -1,0 +1,14 @@
+{
+    "name": "mis/token-sdk",
+    "description": "PHP SDK for MIS Token Management System",
+    "type": "library",
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TokenSDK\\": "src/"
+        }
+    },
+    "license": "proprietary"
+}
