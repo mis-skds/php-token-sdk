@@ -1,5 +1,5 @@
 {
-    "name": "mis/token-sdk",
+    "name": "mis-sdks/php-token-sdk",
     "description": "PHP SDK for MIS Token Management System",
     "type": "library",
     "require": {
