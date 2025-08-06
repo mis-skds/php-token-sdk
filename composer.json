@@ -10,5 +10,8 @@
             "TokenSDK\\": "src/"
         }
     },
-    "license": "proprietary"
+    "license": "proprietary",
+    "require-dev": {
+        "vlucas/phpdotenv": "^5.6"
+    }
 }
