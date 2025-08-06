@@ -4,50 +4,113 @@ namespace TokenSDK;
 
 use GuzzleHttp\Client;
 
-class TokenClient {
+class TokenClient
+{
     private $client;
     private $baseUrl;
-    private $apiKey;
+    private $clientId;
+    private $clientSecret;
 
-    public function __construct(string $baseUrl, string $apiKey = null) {
+    public function __construct(string $baseUrl, string $clientId, string $clientSecret)
+    {
         $this->baseUrl = rtrim($baseUrl, '/');
-        $this->apiKey = $apiKey;
+        $this->clientId = $clientId;
+        $this->clientSecret = $clientSecret;
         $this->client = new Client([
-            'base_uri' => $this->baseUrl,
+            'base_uri' => $this->baseUrl . "/",
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ],
+            'connect_timeout' => 5.0, // Connection timeout
             'timeout'  => 5.0,
         ]);
     }
 
-    private function request(string $method, string $uri, array $options = []) {
-        if ($this->apiKey) {
-            $options['headers']['Authorization'] = 'Bearer ' . $this->apiKey;
+    private function request(string $method, string $uri, array $options = [])
+    {
+        if ($this->clientId && $this->clientSecret) {
+            $options['headers']['X-Client-Auth'] = 'Basic ' . base64_encode("{$this->clientId}:{$this->clientSecret}");
         }
-        $response = $this->client->request($method, $uri, $options);
-        return json_decode($response->getBody(), true);
+
+        try {
+            $response = $this->client->request($method, $uri, $options);
+            return json_decode($response->getBody(), true);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return [
+                'status' => 0,
+                'message' => $e->getMessage()
+            ];
+        }
     }
 
-    public function issueToken(array $data) {
-        return $this->request('POST', '/api/tokens/issue', ['json' => $data]);
+    /**
+     * Issue a new token.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function issueToken(array $data): array
+    {
+        return $this->request('POST', 'tokens/issue', ['json' => $data]);
     }
 
-    public function callNextToken(array $data) {
-        return $this->request('POST', '/api/tokens/call-next', ['json' => $data]);
+    /**
+     * Call the next token in the queue.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function callNextToken(array $data): array
+    {
+        return $this->request('POST', 'tokens/call-next', ['json' => $data]);
     }
 
-    public function callTokenById($tokenId, array $data = []) {
-        return $this->request('POST', "/api/tokens/call/{$tokenId}", ['json' => $data]);
+    /**
+     * Call a specific token by its ID.
+     *
+     * @param int $tokenId
+     * @param array $data
+     * @return array
+     */
+    public function callTokenById($tokenId, array $data = []): array
+    {
+        return $this->request('POST', "tokens/{$tokenId}/call", ['json' => $data]);
     }
 
-    public function skipToken($tokenId) {
-        return $this->request('POST', "/api/tokens/skip/{$tokenId}");
+    /**
+     * Skip a specific token by its ID.
+     *
+     * @param int $tokenId
+     * @param array $data
+     * @return array
+     */
+    public function skipToken($tokenId, array $data = []): array
+    {
+        return $this->request('POST', "tokens/{$tokenId}/skip", ['json' => $data]);
     }
 
-    public function completeToken($tokenId) {
-        return $this->request('POST', "/api/tokens/complete/{$tokenId}");
+    /**
+     * Complete a specific token by its ID.
+     *
+     * @param int $tokenId
+     * @param array $data
+     * @return array
+     */
+    public function completeToken($tokenId, array $data = []): array
+    {
+        return $this->request('POST', "tokens/{$tokenId}/complete", ['json' => $data]);
     }
 
-    public function getDisplayData($locationId = null) {
-        $uri = '/api/display';
+    /**
+     * Get display data for a specific location.
+     *
+     * @param int|null $locationId
+     * @return array
+     */
+    public function getDisplayData($locationId = null): array
+    {
+        $uri = 'display';
         if ($locationId) {
             $uri .= '?location_id=' . $locationId;
         }
