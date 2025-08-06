@@ -5,7 +5,7 @@ This SDK allows you to interact with the Token Management System API.
 ## Installation
 
 ```bash
-composer require yourname/token-sdk
+composer require mis-sdks/php-token-sdk
 ```
 
 ## Usage
