@@ -116,4 +116,82 @@ class TokenClient
         }
         return $this->request('GET', $uri);
     }
+
+    /**
+     * Save location data.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function saveLocationData(array $data): array
+    {
+        return $this->request('POST', 'locations/save', ['json' => $data]);
+    }
+
+    /**
+     * Get a list of locations.
+     *
+     * @param array $filter
+     * @return array
+     */
+    public function getLocations(array $filter): array
+    {
+        return $this->request(
+            'GET',
+            'locations',
+            [
+                'query' => $filter
+            ]
+        );
+    }
+
+    /**
+     * Get a specific location by its ID.
+     *
+     * @param int $locationId
+     * @return array
+     */
+    public function getLocationById($locationId): array
+    {
+        return $this->request('GET', "locations/{$locationId}");
+    }
+
+    /**
+     * Save service point data.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function saveServicepointData(array $data): array
+    {
+        return $this->request('POST', 'service-points/save', ['json' => $data]);
+    }
+
+    /**
+     * Get a list of service points.
+     *
+     * @param array $filter
+     * @return array
+     */
+    public function getServicepoints(array $filter): array
+    {
+        return $this->request(
+            'GET',
+            'service-points',
+            [
+                'query' => $filter
+            ]
+        );
+    }
+
+    /**
+     * Get a specific service point by its ID.
+     *
+     * @param int $servicepointId
+     * @return array
+     */
+    public function getServicepointById($servicepointId): array
+    {
+        return $this->request('GET', "service-points/{$servicepointId}");
+    }
 }
